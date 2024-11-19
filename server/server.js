@@ -1,38 +1,38 @@
-// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
+const dotenv = require("dotenv");
 
-const achievementRoutes = require("./routes/achievementRoutes");
-const notificationRoutes = require("./routes/notificationRoutes");
-const eventRoutes = require("./routes/eventRoutes");
-const authRoutes = require("./routes/authRoutes");
+// Initialize dotenv to use environment variables
+dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(express.json()); // Parse incoming JSON requests
-app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(express.json());
+app.use(cors());
 
-// Connect to MongoDB using the DATABASE_URL from .env
-mongoose.connect(process.env.DATABASE_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Failed to connect to MongoDB", err));
+
+// Import routes
+const adminAuthRoutes = require("./routes/adminAuth");
+const notificationRoutes = require("./routes/notificationRoutes"); // New route for notifications
+
+// Use routes
+app.use("/api/admin/auth", adminAuthRoutes);
+app.use("/api/notifications", notificationRoutes); // Use notifications route
+
+// Set the port from environment variables or default to 5000
+const port = process.env.PORT || 5000;
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
-
-const db = mongoose.connection;
-
-// Handle errors and successful connection
-db.on("error", console.error.bind(console, "Connection error:"));
-db.once("open", () => console.log("Connected to Database"));
-
-// Register Routes
-app.use("/api/achievements", achievementRoutes); // Achievement routes
-app.use("/api/notifications", notificationRoutes); // Notification routes
-app.use("/api/events", eventRoutes); // Event routes
-app.use("/api/auth", authRoutes); // Auth routes
-
-// Start the server using PORT from .env or default to 3000
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

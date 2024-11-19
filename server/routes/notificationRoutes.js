@@ -1,32 +1,29 @@
-// notificationRoutes.js
 const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const {
+  addNotification,
+  getNotifications,
+} = require("../controllers/notificationController");
+
 const router = express.Router();
-const Notification = require("../models/Notification");
+
+// Configure Multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Set the uploads folder for storing files
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+// Route to add a notification with optional file upload
+router.post("/add", upload.single("file"), addNotification);
 
 // Route to get all notifications
-router.get("/", async (req, res) => {
-  try {
-    const notifications = await Notification.find();
-    res.json(notifications);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+router.get("/", getNotifications);
 
-// Route to add a new notification
-router.post("/", async (req, res) => {
-  const notification = new Notification({
-    title: req.body.title,
-    message: req.body.message,
-    date: req.body.date || Date.now(),
-  });
-
-  try {
-    const newNotification = await notification.save();
-    res.status(201).json(newNotification);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-module.exports = router; // Ensure the router is exported
+module.exports = router;

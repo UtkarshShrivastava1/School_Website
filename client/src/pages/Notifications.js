@@ -1,32 +1,56 @@
 import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+} from "@mui/material";
 import axios from "axios";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("/api/notifications")
-      .then((response) => {
-        setNotifications(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the notifications!", error);
-      });
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/notifications");
+        setNotifications(res.data);
+      } catch (error) {
+        console.error("Error fetching notifications", error);
+      }
+    };
+
+    fetchNotifications();
   }, []);
 
   return (
-    <div>
-      <h1>Notifications</h1>
-      <ul>
+    <Box>
+      <Typography variant="h4" gutterBottom>
+        Notifications
+      </Typography>
+      <List>
         {notifications.map((notification) => (
-          <li key={notification._id}>
-            <h3>{notification.title}</h3>
-            <p>{notification.message}</p>
-          </li>
+          <ListItem key={notification._id} divider>
+            <ListItemText
+              primary={notification.title}
+              secondary={notification.message}
+            />
+            {notification.filePath && (
+              <a
+                href={`http://localhost:5000${notification.filePath}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                <Button variant="outlined">Download PDF</Button>
+              </a>
+            )}
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Box>
   );
 };
 

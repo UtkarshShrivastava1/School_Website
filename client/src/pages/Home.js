@@ -2,27 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CarouselComponent from "../components/CarouselComponent"; // Ensure the path is correct
 import { Box, Typography } from "@mui/material";
-
-const mockNotifications = [
-  "Result of Class X announced!",
-  "New Time Table for Exams Released.",
-  "Holiday Declared on Friday due to weather conditions.",
-  "Annual Sports Day Scheduled for next week!",
-];
+import axios from "axios"; // Import axios for API call
 
 const Home = () => {
   const [currentNotification, setCurrentNotification] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Mock to simulate fetching recent notification
-    const interval = setInterval(() => {
-      setCurrentNotification(
-        mockNotifications[Math.floor(Math.random() * mockNotifications.length)]
-      );
-    }, 3000); // Change notification every 3 seconds
+    const fetchRecentNotification = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/notifications"); // API call to fetch notifications
+        if (res.data && res.data.length > 0) {
+          const latestNotification = res.data[0]; // Assuming the latest notification is the first item
+          setCurrentNotification(latestNotification.message);
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
 
-    return () => clearInterval(interval);
+    fetchRecentNotification(); // Fetch recent notification on component mount
   }, []);
 
   return (
@@ -66,7 +65,8 @@ const Home = () => {
             fontStyle: "italic",
           }}
         >
-          {currentNotification}
+          {currentNotification || "No notifications available"}{" "}
+          {/* Display notification or fallback text */}
         </Typography>
       </Box>
 
