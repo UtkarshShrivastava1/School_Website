@@ -6,17 +6,21 @@ const Notification = require("../models/NotificationModel");
 exports.addNotification = async (req, res) => {
   try {
     const { title, message, date } = req.body;
-    const filePath = req.file ? `/uploads/${req.file.filename}` : null; // Store file path if a file is uploaded
+    const filePath = req.file ? `/uploads/${req.file.filename}` : null; // Get file path if uploaded
 
+    // Create new notification
     const newNotification = new Notification({
       title,
       message,
       date,
-      filePath, // Add file path to the notification model
+      filePath, // Include the file path in the notification model
     });
 
+    // Save the notification to the database
     await newNotification.save();
+
     res.status(201).json({
+      success: true,
       message: "Notification added successfully",
       notification: newNotification,
     });
@@ -31,18 +35,19 @@ exports.getNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find().sort({ date: -1 });
 
-    // Verify file paths and check if they exist
+    // Verify file paths and ensure they exist on the server
     const notificationsWithValidFiles = notifications.map((notification) => {
       if (notification.filePath) {
         const fullPath = path.join(__dirname, "..", notification.filePath);
         if (!fs.existsSync(fullPath)) {
+          console.warn(`File not found: ${fullPath}`);
           notification.filePath = null; // Mark the file as missing
         }
       }
       return notification;
     });
 
-    res.json(notificationsWithValidFiles);
+    res.status(200).json(notificationsWithValidFiles);
   } catch (error) {
     console.error("Error retrieving notifications:", error);
     res.status(500).json({ error: "Failed to retrieve notifications" });

@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
-
+const path = require("path");
 // Initialize dotenv to use environment variables
 dotenv.config();
 
@@ -28,7 +28,7 @@ const notificationRoutes = require("./routes/notificationRoutes"); // New route 
 // Use routes
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/notifications", notificationRoutes); // Use notifications route
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Set the port from environment variables or default to 5000
 const port = process.env.PORT || 5000;
 

@@ -178,6 +178,24 @@ const Navbar = () => {
           </Button>
         </Box>
 
+        {/* Photo Gallery Button */}
+        <Button
+          color="inherit"
+          component={Link}
+          to="/photo-gallery"
+          sx={{
+            fontSize: isMobile ? "1rem" : "1.2rem",
+            fontWeight: 500,
+            textTransform: "none",
+            ":hover": {
+              backgroundColor: "#003366",
+              borderRadius: "15px",
+            },
+          }}
+        >
+          Photo Gallery
+        </Button>
+
         {/* Admin Login Button */}
         <Button
           color="inherit"

@@ -14,7 +14,7 @@ import RegisterAdmin from "./pages/Admin/RegisterAdmin"; // Admin feature
 import UploadPhotos from "./pages/Admin/UploadPhotos"; // Admin feature
 import AddNotification from "./pages/Admin/AddNotification"; // Admin feature
 import NotFound from "./pages/NotFound";
-
+import PhotoGallery from "./pages/PhotoGallery"; // Import the PhotoGallery component
 // Importing Components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -35,7 +35,6 @@ function App() {
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/events" element={<Events />} />
           <Route path="/curriculum" element={<Curriculum />} />
-
           {/* Admin Routes */}
           <Route path="/login" element={<AdminLogin />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
@@ -51,7 +50,7 @@ function App() {
             path="/admin-dashboard/add-notification"
             element={<AddNotification />}
           />
-
+          <Route path="/photo-gallery" element={<PhotoGallery />} />
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>

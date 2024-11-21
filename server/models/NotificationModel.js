@@ -13,6 +13,10 @@ const NotificationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  filePath: {
+    type: String, // Store the file path as a string
+    required: false, // Not all notifications might have a PDF
+  },
 });
 
 module.exports = mongoose.model("Notification", NotificationSchema);
